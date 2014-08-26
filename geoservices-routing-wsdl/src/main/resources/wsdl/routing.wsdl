@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="RoutingService" targetNamespace="http://routing.geoservices.emergya.com/"
+                  xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+                  xmlns:tns="http://routing.geoservices.emergya.com/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <xs:schema  attributeFormDefault="unqualified" elementFormDefault="unqualified" 
+                    targetNamespace="http://routing.geoservices.emergya.com/" 
+                    xmlns:tns="http://routing.geoservices.emergya.com/"  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:element name="findShortestPath" type="tns:findShortestPath"/>
+            <xs:element name="findShortestPathResponse" type="tns:findShortestPathResponse"/>
+            <xs:complexType name="Point">
+                <xs:sequence>
+                    <xs:element name="coordinates" type="xs:string"></xs:element>
+                </xs:sequence>
+                <xs:attribute name="srsName" type="xs:string"/>
+            </xs:complexType>
+            <xs:complexType name="Header">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"></xs:element>
+                    <xs:element name="value" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Message">
+                <xs:sequence>
+                    <xs:element name="type" type="xs:string"></xs:element>
+                    <xs:element name="text" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>            
+            <xs:complexType name="Step">
+                <xs:sequence></xs:sequence>
+                <xs:attribute name="order" type="xs:nonNegativeInteger"/>
+            </xs:complexType>
+            <xs:complexType name="findShortestPath">
+                <xs:sequence>
+                    <xs:element name="startPoint" type="tns:Point"></xs:element>
+                    <xs:element name="targetPoint" type="tns:Point"></xs:element>
+                </xs:sequence>
+            </xs:complexType>         
+            <xs:complexType name="findShortestPathResponse">
+                <xs:sequence> 
+                    <xs:element name="headers">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="header" maxOccurs="unbounded" minOccurs="0" type="tns:Header"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="startPoint" type="tns:Point"></xs:element>
+                    <xs:element name="targetPoint" type="tns:Point"></xs:element>
+                    <xs:element name="path">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="step" maxOccurs="unbounded" minOccurs="0" type="tns:Step">
+                                           
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="messages">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="message" maxOccurs="unbounded" minOccurs="0" type="tns:Message"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>           
+                </xs:sequence>
+            </xs:complexType>
+            
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="findShortestPath">
+        <wsdl:part name="parameters" element="tns:findShortestPath"/>
+    </wsdl:message>
+    <wsdl:message name="findShortestPathResponse">
+        <wsdl:part name="parameters" element="tns:findShortestPathResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="RoutingService">
+        <wsdl:operation name="findShortestPath">
+            <wsdl:input name="findShortestPath" message="tns:findShortestPath"> </wsdl:input>
+            <wsdl:output name="findShortestPathResponse" message="tns:findShortestPathResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="RoutingServiceImplSoapBinding" type="tns:RoutingService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>                
+        <wsdl:operation name="findShortestPath">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="findShortestPath">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="findShortestPathResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="RoutingServiceImpl">
+        <wsdl:port name="RoutingServicePort" binding="tns:RoutingServiceImplSoapBinding">
+            <soap:address location="http://routing.geoservices.emergya.com" />
+        </wsdl:port>
+    </wsdl:service>    
+</wsdl:definitions>
