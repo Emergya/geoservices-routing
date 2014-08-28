@@ -1,5 +1,6 @@
 package com.emergya.geoservices.routing.ws;
 
+import com.emergya.geoservices.routing.graphhopper.GHRouter;
 import com.emergya.geoservices.routing.wsdl.FindShortestPath;
 import com.emergya.geoservices.routing.wsdl.FindShortestPathResponse;
 import com.emergya.geoservices.routing.wsdl.Header;
@@ -13,6 +14,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Implementation for the WS interface for the routing geoservices.
@@ -22,6 +24,9 @@ import javax.xml.ws.ResponseWrapper;
 @WebService(serviceName = "RoutingService", targetNamespace = "axis2.routing.geoservices.emergya.com")
 @Stateless()
 public class RoutingServiceImpl implements RoutingService {
+    
+    @Autowired
+    private GHRouter ghRouter;
 
     @Override
     @WebMethod()
@@ -30,8 +35,9 @@ public class RoutingServiceImpl implements RoutingService {
     @ResponseWrapper(targetNamespace = "n.routing.geoservices.emergya.com")
     public @WebResult(targetNamespace = "n.routing.geoservices.emergya.com")
     FindShortestPathResponse findShortestPath(FindShortestPath parameters) {
-        
-        FindShortestPathResponse response = new FindShortestPathResponse();
+
+        FindShortestPathResponse response = ghRouter.createRoute(parameters);
+
         response.setHeaders(new FindShortestPathResponse.Headers());
 
         List<Header> headers = response.getHeaders().getHeader();

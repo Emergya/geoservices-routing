@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.emergya.geoservices</groupId>
-    <artifactId>geoservices-routing-2</artifactId>
+    <artifactId>geoservices-routing</artifactId>
     <version>0.1</version>
     <packaging>pom</packaging>
     
@@ -18,10 +18,11 @@
         <url>http://www.emergya.es</url>
     </organization>
 
-    <modules>        
-        <module>geoservices-routing-osrm</module>      
+    <modules>             
+        <module>geoservices-routing-graphhopper</module>  
         <module>geoservices-routing-wsdl</module>      
         <module>geoservices-routing-ws</module>
+        <module>osrm-connector</module>
     </modules>
     
     <properties>
