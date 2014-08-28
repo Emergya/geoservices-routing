@@ -16,6 +16,20 @@
                 </xs:sequence>
                 <xs:attribute name="srsName" type="xs:string"/>
             </xs:complexType>
+            <xs:complexType name="ResponsePoint">
+                <xs:sequence>
+                    <xs:element name="edge">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="id" type="xs:int"></xs:element>
+                                <xs:element name="distFrom" type="xs:double"></xs:element>
+                                <xs:element name="distTo" type="xs:double"></xs:element>
+                                <xs:element name="direction" type="xs:string"></xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
             <xs:complexType name="Header">
                 <xs:sequence>
                     <xs:element name="name" type="xs:string"></xs:element>
@@ -29,8 +43,14 @@
                 </xs:sequence>
             </xs:complexType>            
             <xs:complexType name="Step">
-                <xs:sequence></xs:sequence>
-                <xs:attribute name="order" type="xs:nonNegativeInteger"/>
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"></xs:element>
+                    <xs:element name="type" type="xs:int"></xs:element>
+                    <xs:element name="edge" type="tns:Edge" maxOccurs="unbounded" minOccurs="0"></xs:element>
+                    <xs:element name="time" type="xs:double"></xs:element>
+                    <xs:element name="distance" type="xsd:double"></xs:element>                    
+                </xs:sequence>
+                <xs:attribute name="order" type="xs:int"/>
             </xs:complexType>
             <xs:complexType name="findShortestPath">
                 <xs:sequence>
@@ -47,8 +67,8 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
-                    <xs:element name="startPoint" type="tns:Point"></xs:element>
-                    <xs:element name="targetPoint" type="tns:Point"></xs:element>
+                    <xs:element name="startPoint" type="tns:ResponsePoint"></xs:element>
+                    <xs:element name="targetPoint" type="tns:ResponsePoint"></xs:element>
                     <xs:element name="path">
                         <xs:complexType>
                             <xs:sequence>
@@ -67,7 +87,12 @@
                     </xs:element>           
                 </xs:sequence>
             </xs:complexType>
-            
+            <xs:complexType name="Edge">
+                <xs:sequence>
+                    <xs:element name="id" type="xsd:int"></xs:element>
+                    <xs:element name="geometry" type="xsd:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
         </xs:schema>
     </wsdl:types>
     <wsdl:message name="findShortestPath">

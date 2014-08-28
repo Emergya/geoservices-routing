@@ -70,7 +70,12 @@
             <groupId>com.emergya.geoservices</groupId>
             <artifactId>geoservices-routing-wsdl</artifactId>
             <version>${project.version}</version>        
-        </dependency>       
+        </dependency>
+         <dependency>
+            <groupId>com.emergya.geoservices</groupId>
+            <artifactId>geoservices-routing-graphhopper</artifactId>
+            <version>${project.version}</version>        
+        </dependency>     
     </dependencies>
 
     <build>
