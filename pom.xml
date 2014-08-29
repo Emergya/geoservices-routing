@@ -22,7 +22,6 @@
         <module>geoservices-routing-graphhopper</module>  
         <module>geoservices-routing-wsdl</module>      
         <module>geoservices-routing-ws</module>
-        <module>osrm-connector</module>
     </modules>
     
     <properties>
