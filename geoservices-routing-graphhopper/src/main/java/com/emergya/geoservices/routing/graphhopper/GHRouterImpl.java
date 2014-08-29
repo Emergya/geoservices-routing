@@ -11,11 +11,7 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopperAPI;
 import com.graphhopper.http.GraphHopperWeb;
 import com.graphhopper.util.Instruction;
-import com.graphhopper.util.InstructionList;
-import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPlace;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +24,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class GHRouterImpl implements GHRouter {
 
-    @Value("${geoservices.routing.graphhopper.osmFilePath}")
-    private String OSM_FILE_PATH;
+    @Value("${geoservices.routing.graphhopper.url}")
+    private String GRAPHHOPPER_URL;
 
     private GraphHopperAPI gh;
 
@@ -38,7 +34,7 @@ public class GHRouterImpl implements GHRouter {
        
         if(gh == null) {
             gh = new GraphHopperWeb();
-            gh.load("http://localhost:8989/route");
+            gh.load(GRAPHHOPPER_URL);
         }
 
         GHResponse route = gh.route(createGHRequest(parameters));
