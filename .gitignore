@@ -4,3 +4,4 @@
 *.orig
 */nb-configuration.xml
 **/context.xml
+/geoservices-routing-ws/src/main/webapp/META-INF/context.xml
