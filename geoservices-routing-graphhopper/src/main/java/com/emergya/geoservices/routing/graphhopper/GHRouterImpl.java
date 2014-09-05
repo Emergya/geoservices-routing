@@ -97,8 +97,6 @@ public class GHRouterImpl implements GHRouter {
         double accTime = 0.0;
         double accDistance = 0.0;
         int size = route.getInstructions().getSize();
-        int index = 0;
-         Geometry geom = null;
 
         //último paso no aporta información
         while (instructions.hasNext() && i < size - 1) {
@@ -138,8 +136,8 @@ public class GHRouterImpl implements GHRouter {
 
             //edges
             List<Edge> edges = step.getEdge();
-            int numberEdges = instruction.getPoints().getSize();
-           
+            int numberEdges = (instruction.getPoints().getSize()) - 1;
+
             for (int j = 0; j < numberEdges; j++) {
                 Edge edge = new Edge();
                 //id
@@ -147,12 +145,26 @@ public class GHRouterImpl implements GHRouter {
                 int id = Integer.parseInt(string);
                 edge.setId(id);
                 //geometry
-
-                if (i < (size - 2) && (index < route.getPoints().getSize() -1)) {
-                    GHPoint p1 = route.getPoints().toGHPoint(index);
-                    GHPoint p2 = route.getPoints().toGHPoint(index + 1);
-                    index++;
-                    geom = toLineString(p1, p2);
+                GHPoint p1;
+                GHPoint p2;
+                Geometry geom = null;
+                String srs = parameters.getStartPoint().getSrsName();
+                if (j < numberEdges - 1) {
+                    p1 = instruction.getPoints().toGHPoint(j);
+                    p2 = instruction.getPoints().toGHPoint(j + 1);
+                    try {
+                        geom = toLineString(p1, p2, srs);
+                    } catch (            FactoryException | MismatchedDimensionException | TransformException ex) {
+                        Logger.getLogger(GHRouterImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    p1 = instruction.getPoints().toGHPoint(numberEdges - 1);
+                    p2 = instruction.getPoints().toGHPoint(numberEdges);
+                    try {
+                        geom = toLineString(p1, p2, srs);
+                    } catch (            FactoryException | MismatchedDimensionException | TransformException ex) {
+                        Logger.getLogger(GHRouterImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    } 
                 }
                 GMLWriter writerGeom = new GMLWriter();
                 edge.setGeometry(writerGeom.write(geom));
@@ -224,18 +236,24 @@ public class GHRouterImpl implements GHRouter {
         return gHPlace;
     }
 
-    private LineString toLineString(GHPoint p1, GHPoint p2) {
+    private Geometry toLineString(GHPoint p1, GHPoint p2, String srs) throws FactoryException, MismatchedDimensionException, TransformException {
         Coordinate[] coord = new Coordinate[2];
         Coordinate c1 = new Coordinate(p1.getLat(), p1.getLon());
         Coordinate c2 = new Coordinate(p2.getLat(), p2.getLon());
         coord[0] = c1;
         coord[1] = c2;
         CoordinateSequence coorSeq = new CoordinateArraySequence(coord);
-
+        
         GeometryFactory geometryFact = new GeometryFactory();
         geometryFact.createLineString(coorSeq);
 
-        LineString edge = new LineString(coorSeq, geometryFact);
+        Geometry geometry = new com.vividsolutions.jts.geom.LineString(coorSeq, geometryFact);
+        
+        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:" + srs);
+        MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
+        Geometry edge = JTS.transform(geometry, transform);
+       
         return edge;
     }
 
