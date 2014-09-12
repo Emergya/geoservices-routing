@@ -1,10 +1,17 @@
 package com.emergya.geoservices.routing.graphhopper;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.emergya.geoservices.routing.utils.PointUtils;
 import com.emergya.geoservices.routing.wsdl.Edge;
 import com.emergya.geoservices.routing.wsdl.FindShortestPath;
 import com.emergya.geoservices.routing.wsdl.FindShortestPathResponse;
 import com.emergya.geoservices.routing.wsdl.Point;
+import com.emergya.geoservices.routing.wsdl.RequestPoint;
 import com.emergya.geoservices.routing.wsdl.Step;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
@@ -12,10 +19,7 @@ import com.graphhopper.GraphHopperAPI;
 import com.graphhopper.http.GraphHopperWeb;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.shapes.GHPlace;
-import java.util.Iterator;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import com.graphhopper.util.shapes.GHPoint;
 
 /**
  *
@@ -94,9 +98,12 @@ public class GHRouterImpl implements GHRouter {
     private static final String _ONTO_ = " onto ";
 
     private GHRequest createGHRequest(FindShortestPath parameters) {
-        GHRequest request = new GHRequest(
-                toGHPlace(parameters.getStartPoint()),
-                toGHPlace(parameters.getTargetPoint()));
+    	RequestPoint sp = parameters.getStartPoint();
+    	Point start = sp.getPoint();
+    	Point finish = parameters.getTargetPoint().getPoint();
+    	GHPoint startPoint = toGHPlace(start);
+    	GHPoint finishPoint = toGHPlace(finish);
+        GHRequest request = new GHRequest(startPoint, finishPoint);
 
         return request;
     }
