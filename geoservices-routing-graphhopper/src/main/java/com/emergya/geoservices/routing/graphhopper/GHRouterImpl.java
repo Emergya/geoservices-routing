@@ -19,7 +19,10 @@ import com.graphhopper.GraphHopperAPI;
 import com.graphhopper.http.GraphHopperWeb;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.shapes.GHPlace;
-import com.graphhopper.util.shapes.GHPoint;
+import java.util.Iterator;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  *
@@ -98,12 +101,9 @@ public class GHRouterImpl implements GHRouter {
     private static final String _ONTO_ = " onto ";
 
     private GHRequest createGHRequest(FindShortestPath parameters) {
-    	RequestPoint sp = parameters.getStartPoint();
-    	Point start = sp.getPoint();
-    	Point finish = parameters.getTargetPoint().getPoint();
-    	GHPoint startPoint = toGHPlace(start);
-    	GHPoint finishPoint = toGHPlace(finish);
-        GHRequest request = new GHRequest(startPoint, finishPoint);
+        GHRequest request = new GHRequest(
+                toGHPlace(parameters.getStartPoint()),
+                toGHPlace(parameters.getTargetPoint()));
 
         return request;
     }
