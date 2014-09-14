@@ -75,7 +75,12 @@
             <groupId>com.emergya.geoservices</groupId>
             <artifactId>geoservices-routing-graphhopper</artifactId>
             <version>${project.version}</version>        
-        </dependency>     
+        </dependency>    
+        <dependency>
+			<groupId>com.sun.org.apache</groupId>
+			<artifactId>jaxp-ri</artifactId>
+			<version>1.4</version>
+		</dependency> 
     </dependencies>
 
     <build>
@@ -96,10 +101,7 @@
                 <version>2.3.2</version>
                 <configuration>
                     <source>1.7</source>
-                    <target>1.7</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
+                    <target>1.7</target>                   
                 </configuration>
             </plugin>            
             <plugin>

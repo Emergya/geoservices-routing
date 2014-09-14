@@ -1,7 +1,11 @@
+.classpath
+.project
 */target/
 *~
 *.bak
 *.orig
 */nb-configuration.xml
 **/context.xml
-/geoservices-routing-ws/src/main/webapp/META-INF/context.xml
+**/.settings/
+/geoservices-search-pois-solr-config/data/
+/geoservices-search-pois-solr-config/conf/dataimport-devel.properties

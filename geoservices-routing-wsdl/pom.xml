@@ -26,7 +26,7 @@
 		</dependency>
 	</dependencies>
 
-	<build>
+	<build>	
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -35,9 +35,6 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
-					<compilerArguments>
-						<endorseddirs>${endorsed.dir}</endorseddirs>
-					</compilerArguments>
 				</configuration>
 			</plugin>
 			<!--  plugin>

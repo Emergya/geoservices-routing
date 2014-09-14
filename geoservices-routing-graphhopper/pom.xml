@@ -6,8 +6,6 @@
         <artifactId>geoservices-routing</artifactId>
         <version>0.1</version>
     </parent>
-    
-    <groupId>com.emergya.geoservices</groupId>
     <artifactId>geoservices-routing-graphhopper</artifactId>
     <packaging>jar</packaging>
     <properties>

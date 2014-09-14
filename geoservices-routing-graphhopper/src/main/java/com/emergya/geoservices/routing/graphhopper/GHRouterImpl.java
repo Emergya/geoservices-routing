@@ -102,8 +102,8 @@ public class GHRouterImpl implements GHRouter {
 
     private GHRequest createGHRequest(FindShortestPath parameters) {
         GHRequest request = new GHRequest(
-                toGHPlace(parameters.getStartPoint()),
-                toGHPlace(parameters.getTargetPoint()));
+                toGHPlace(parameters.getStartPoint().getPoint()),
+                toGHPlace(parameters.getTargetPoint().getPoint()));
 
         return request;
     }
