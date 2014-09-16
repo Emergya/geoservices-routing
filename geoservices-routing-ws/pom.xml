@@ -57,6 +57,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-web</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
