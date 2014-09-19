@@ -66,7 +66,7 @@ public class RestRoutingServiceController {
     private Coordinate coordInicio;
     private Coordinate coordFinal;
 	
-	@RequestMapping(value = "/restRouting", method = RequestMethod.POST)
+	@RequestMapping(value = "/mrk", method = RequestMethod.POST)
 	public @ResponseBody
 	String restRouting(@RequestBody String payload){
 		if (gh == null) {
