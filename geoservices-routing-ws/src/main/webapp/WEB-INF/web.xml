@@ -17,4 +17,13 @@
             30
         </session-timeout>
     </session-config>
+    <servlet>
+    	<servlet-name>rest</servlet-name>
+    	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    	<load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>rest</servlet-name>
+    	<url-pattern>/restRouting</url-pattern>
+    </servlet-mapping>
 </web-app>
