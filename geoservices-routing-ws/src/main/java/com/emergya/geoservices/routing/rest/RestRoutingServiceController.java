@@ -53,6 +53,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.gml2.GMLWriter;
 
 @RestController
+@RequestMapping(value = "/mrk")
 public class RestRoutingServiceController {
 	
 	@Value("${geoservices.routing.graphhopper.url}")
@@ -65,8 +66,13 @@ public class RestRoutingServiceController {
     private GraphHopperAPI gh;
     private Coordinate coordInicio;
     private Coordinate coordFinal;
+    
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody String  test() {
+    	return "Please try using POST ;)";
+    }
 	
-	@RequestMapping(value = "/mrk", method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody
 	String restRouting(@RequestBody String payload){
 		if (gh == null) {
