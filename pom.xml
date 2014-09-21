@@ -18,9 +18,7 @@
         <url>http://www.emergya.es</url>
     </organization>
 
-    <modules>             
-        <module>geoservices-routing-graphhopper</module>  
-        <module>geoservices-routing-wsdl</module>      
+    <modules> 
         <module>geoservices-routing-ws</module>
     </modules>
     
