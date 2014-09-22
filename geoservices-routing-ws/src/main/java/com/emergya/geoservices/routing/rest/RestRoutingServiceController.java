@@ -64,8 +64,6 @@ public class RestRoutingServiceController {
 	private String SRS;
 
     private GraphHopperAPI gh;
-    private Coordinate coordInicio;
-    private Coordinate coordFinal;
     
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody String  test() {
@@ -277,11 +275,7 @@ public class RestRoutingServiceController {
 		String coordinate = point[1];
 		String[] pointValue = getPoint(coordinate);
         Coordinate c = new Coordinate(Double.valueOf(pointValue[1]), Double.valueOf(pointValue[0]));
-        if (coordInicio == null) {
-            coordInicio = c;
-        } else {
-            coordFinal = c;
-        }
+       
         Coordinate[] coord = new Coordinate[1];
         coord[0] = c;
 
