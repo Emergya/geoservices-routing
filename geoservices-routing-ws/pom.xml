@@ -73,7 +73,7 @@
     </dependencies>
 
     <build>
-        <finalName>mrk</finalName>
+        <finalName>geoservices-routing-ws</finalName>
         <filters>
             <filter>src/main/filters/${profile.properties}</filter>
         </filters>
