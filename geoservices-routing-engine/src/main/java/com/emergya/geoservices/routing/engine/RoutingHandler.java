@@ -46,9 +46,18 @@ public class RoutingHandler {
 	
 	private GraphHopper hopper;
 	
-	public GHResponse getRoute(String[] startPointValue, String[] targetPointValue) throws MismatchedDimensionException, FactoryException, TransformException{
+	public GHResponse getRoute(String[] startPointValue, String[] targetPointValue, String type_wighting) throws MismatchedDimensionException, FactoryException, TransformException{
+		// Set points
 		GHRequest request = new GHRequest(toGHPlace(startPointValue), toGHPlace(targetPointValue));
+		// Set language
         request.setLocale(this.LOCALE);
+        // Set weighting
+        if(type_wighting != null){
+        	request.setWeighting(type_wighting);
+        }else{
+        	request.setWeighting(this.WEIGHTING);
+        }
+        
 		return hopper.route(request);
 	}
 	
@@ -68,7 +77,13 @@ public class RoutingHandler {
 		String srs = point[0];
 		String coordinate = point[1];
 		String[] pointValue = this.getPoint(coordinate);
-        Coordinate c = new Coordinate(Double.valueOf(pointValue[1]), Double.valueOf(pointValue[0]));
+		Coordinate c = null;
+		if(srs.equalsIgnoreCase(this.SRS)){
+			c = new Coordinate(Double.valueOf(pointValue[1]), Double.valueOf(pointValue[0]));
+		}else{
+			c = new Coordinate(Double.valueOf(pointValue[0]), Double.valueOf(pointValue[1]));
+		}
+         
        
         Coordinate[] coord = new Coordinate[1];
         coord[0] = c;
