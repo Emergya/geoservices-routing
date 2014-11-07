@@ -23,6 +23,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,13 +38,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.graphhopper.GHRequest;
+import com.emergya.geoservices.routing.engine.RoutingHandler;
 import com.graphhopper.GHResponse;
-import com.graphhopper.GraphHopperAPI;
-import com.graphhopper.http.GraphHopperWeb;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.PointList;
-import com.graphhopper.util.shapes.GHPlace;
 import com.graphhopper.util.shapes.GHPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -56,14 +54,11 @@ import com.vividsolutions.jts.io.gml2.GMLWriter;
 @RequestMapping(value = "/mrk")
 public class RestRoutingServiceController {
 	
-	@Value("${geoservices.routing.graphhopper.url}")
-    private String GRAPHHOPPER_URL;
-	@Value("${geoservices.routing.graphhopper.locale}")
-	private String LOCALE;
 	@Value("${geoservices.routing.graphhopper.srs}")
 	private String SRS;
-
-    private GraphHopperAPI gh;
+    
+    @Autowired
+	RoutingHandler handler;
     
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody String  test() {
@@ -73,11 +68,6 @@ public class RestRoutingServiceController {
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody
 	String restRouting(@RequestBody String payload){
-		if (gh == null) {
-            gh = new GraphHopperWeb();
-            gh.load(GRAPHHOPPER_URL);
-        }
-
 		// Request
         GHResponse route = null;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -90,7 +80,7 @@ public class RestRoutingServiceController {
 			startPointValue = getCoordinates("startPoint", document);
 			srs = startPointValue[0];
 			targetPointValue = getCoordinates("targetPoint", document);
-			route = gh.route(createGHRequest(startPointValue, targetPointValue));
+			route = handler.getRoute(startPointValue, targetPointValue);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -253,49 +243,6 @@ public class RestRoutingServiceController {
 		}
 		return value;
 	}
-	
-	private String[] getPoint(String pointValue){
-		String[] point = new String[2];
-		if(pointValue.indexOf(",") > -1){
-			point = pointValue.split(",");
-		}
-		return point;
-	}
-	
-	private GHRequest createGHRequest(String[] origin, String[] target) throws MismatchedDimensionException, FactoryException, TransformException {
-        GHRequest request = new GHRequest(toGHPlace(origin), toGHPlace(target));
-        request.setLocale(this.LOCALE);
-
-        return request;
-    }
-	
-	private GHPlace toGHPlace(String[] point) throws FactoryException, MismatchedDimensionException, TransformException {
-
-		String srs = point[0];
-		String coordinate = point[1];
-		String[] pointValue = getPoint(coordinate);
-        Coordinate c = new Coordinate(Double.valueOf(pointValue[1]), Double.valueOf(pointValue[0]));
-       
-        Coordinate[] coord = new Coordinate[1];
-        coord[0] = c;
-
-        CoordinateSequence coorSeq = new CoordinateArraySequence(coord);
-
-        GeometryFactory geometryFactory = new GeometryFactory();
-        geometryFactory.createPoint(coorSeq);
-
-        Geometry geometry = new com.vividsolutions.jts.geom.Point(coorSeq, geometryFactory);
-        
-        CoordinateReferenceSystem sourceCRS = CRS.decode(srs);
-        CoordinateReferenceSystem targetCRS = CRS.decode(this.SRS);
-        MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-        Geometry targetGeometry = JTS.transform(geometry, transform);
-
-        com.vividsolutions.jts.geom.Point jtsPoint = targetGeometry.getCentroid();
-        GHPlace gHPlace = new GHPlace(jtsPoint.getX(), jtsPoint.getY());
-
-        return gHPlace;
-    }
 	
 	private String toString(Document doc) {
 	    try {

@@ -1,113 +1,123 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.emergya.geoservices</groupId>
-        <artifactId>geoservices-routing</artifactId>
-        <version>0.1</version>
-    </parent>
+	<parent>
+		<groupId>com.emergya.geoservices</groupId>
+		<artifactId>geoservices-routing</artifactId>
+		<version>0.1</version>
+	</parent>
 
-    <artifactId>geoservices-routing-ws</artifactId>
-    <packaging>war</packaging>    
+	<artifactId>geoservices-routing-ws</artifactId>
+	<packaging>war</packaging>
 
-    <name>GeoServices: Routing WS Interface</name>
+	<name>GeoServices: Routing WS Interface</name>
 
-    <properties>
-        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <geotools.version>2.6.5</geotools.version>        
-    </properties>
+	<properties>
+		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<geotools.version>2.6.5</geotools.version>
+	</properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>6.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vividsolutions</groupId>
-            <artifactId>jts</artifactId>
-            <version>1.13</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-api</artifactId>
-            <version>${geotools.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId> gt-epsg-hsql</artifactId>
-            <version>${geotools.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.graphhopper</groupId>
-            <artifactId>graphhopper-web</artifactId>
-            <version>0.3</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 
-    <build>
-        <finalName>geoservices-routing-ws</finalName>
-        <filters>
-            <filter>src/main/filters/${profile.properties}</filter>
-        </filters>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>                   
-                </configuration>
-            </plugin>            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>            
-        </plugins>
-    </build>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+			<version>${geotools.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>${geotools.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.emergya.geoservices</groupId>
+			<artifactId>geoservices-routing-engine</artifactId>
+			<version>0.1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>geoservices-routing-ws</finalName>
+		<filters>
+			<filter>src/main/filters/${profile.properties}</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<repositories>
 		<repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-        </repository>
+			<id>osgeo</id>
+			<name>Open Source Geospatial Foundation Repository</name>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
 	</repositories>
 </project>
