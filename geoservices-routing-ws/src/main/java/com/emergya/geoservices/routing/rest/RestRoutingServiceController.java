@@ -80,7 +80,17 @@ public class RestRoutingServiceController {
 			startPointValue = getCoordinates("startPoint", document);
 			srs = startPointValue[0];
 			targetPointValue = getCoordinates("targetPoint", document);
-			route = handler.getRoute(startPointValue, targetPointValue);
+			NodeList prioritize = document.getElementsByTagName("toPrioritize");
+			String type_weighting = null;
+			if(prioritize != null){
+				String type_priority = prioritize.item(0).getTextContent();
+				if(type_priority.equalsIgnoreCase("distance")){
+					type_weighting = "shortest";
+				}else if(type_priority.equalsIgnoreCase("time")){
+					type_weighting = "fastest";
+				}
+			}
+			route = handler.getRoute(startPointValue, targetPointValue, type_weighting);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
