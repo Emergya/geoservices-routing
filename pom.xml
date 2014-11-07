@@ -20,7 +20,8 @@
 
     <modules> 
         <module>geoservices-routing-ws</module>
-    </modules>
+    <module>geoservices-routing-engine</module>
+  </modules>
     
     <properties>
         <spring.version>4.0.6.RELEASE</spring.version>
