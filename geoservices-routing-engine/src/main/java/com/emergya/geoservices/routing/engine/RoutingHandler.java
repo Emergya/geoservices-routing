@@ -49,6 +49,8 @@ public class RoutingHandler {
 	public GHResponse getRoute(String[] startPointValue, String[] targetPointValue, String type_wighting) throws MismatchedDimensionException, FactoryException, TransformException{
 		// Set points
 		GHRequest request = new GHRequest(toGHPlace(startPointValue), toGHPlace(targetPointValue));
+		
+		request.setVehicle(this.VEHICLE);
 		// Set language
         request.setLocale(this.LOCALE);
         // Set weighting
@@ -58,12 +60,16 @@ public class RoutingHandler {
         	request.setWeighting(this.WEIGHTING);
         }
         
+        request.putHint("calcPoints", true);
+        request.putHint("instructions", true);
+        
 		return hopper.route(request);
 	}
 	
 	@PostConstruct
 	public void init(){
 		hopper = new GraphHopper().forServer();
+		hopper.setEnableTurnRestrictions(true);
 		hopper.setInMemory(true);
 		hopper.setOSMFile(this.OSM_FILE_PATH);
 		hopper.setGraphHopperLocation(this.GRAPH_PATH);
