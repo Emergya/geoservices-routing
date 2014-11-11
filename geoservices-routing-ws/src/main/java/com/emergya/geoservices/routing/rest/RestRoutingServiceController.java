@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,9 +41,8 @@ import org.xml.sax.InputSource;
 
 import com.emergya.geoservices.routing.engine.RoutingHandler;
 import com.graphhopper.GHResponse;
-import com.graphhopper.util.Instruction;
+import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.PointList;
-import com.graphhopper.util.shapes.GHPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
@@ -98,8 +98,9 @@ public class RestRoutingServiceController {
 		// Response
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		Document doc = null;
+		DocumentBuilder docBuilder = null;
 		try {
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			docBuilder = docFactory.newDocumentBuilder();
 			doc = docBuilder.newDocument();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -146,23 +147,24 @@ public class RestRoutingServiceController {
 		Element path = doc.createElement("path");
 		findSPR.appendChild(path);
 		
-		// Get Instructions
-		Iterator<Instruction> instructions = route.getInstructions().iterator();
 		int i = 0;
-        double accTime = 0.0;
-        double accDistance = 0.0;
         int size = route.getInstructions().getSize();
-
-        Geometry startEdge = null;
-        Geometry targetEdge = null;
-        while (instructions.hasNext() && i < size - 1){
-        	Instruction instruction = instructions.next();
+        PointList points_route = route.getPoints();
+        //Instruction last = null;
+        InstructionList inst_list = route.getInstructions(); 
+        List<Map<String, Object>> json = inst_list.createJson();
+        Iterator<Map<String, Object>> json_it = json.iterator();
+        if(json.size() == 0){
+        	doc = null;
+        }
+        while(json_it.hasNext() && i < json.size()){
+        	Map<String, Object> json_map = json_it.next();
         	Step step = new Step(doc);
         	// order
         	step.setOrder(Integer.toString(i));
-        	// name
-        	String name = instruction.getName();
-        	step.setName(name);
+        	// text
+        	String text = (String) json_map.get("text");
+        	step.setName(text);
         	// type
         	if (i == 0) {
                 step.setType(Integer.toString(100));
@@ -173,36 +175,45 @@ public class RestRoutingServiceController {
             }
         	// startNode
             step.setStartNode(Integer.toString(i));
-        	// edges
-        	PointList points = instruction.getPoints();
-        	List<EdgeStep> edges_list = step.getEdges();
-        	Geometry geom = null;
-        	Geometry geomUnion;
-        	GHPoint p1;
-            GHPoint p2;
-        	for(int j=0; j<points.getSize()-1; j++){
-        		EdgeStep e = new EdgeStep(doc);
-        		e.setId(Integer.toString(i) + Integer.toString(j) + '0');
-        		p1 = points.toGHPoint(j);
-                p2 = points.toGHPoint(j + 1);
-        		try {
-					geom = toLineString(p1, p2, srs);
-				} catch (MismatchedDimensionException | FactoryException
-						| TransformException e1) {
-					e1.printStackTrace();
-				}
-        		e.setGeom(geom);
-        		edges_list.add(e);
-        	}
-        	
-        	// targetNode
+            // targetNode
             step.setTargetNode(Integer.toString(i+1));
-            //time
-            accTime += instruction.getTime() / 1000;
-            step.setTime(Double.toString(accTime));
-            //distance
-            accDistance += instruction.getDistance();
-            step.setDistance(Double.toString(accDistance));
+            // Time
+            Long time = (Long)json_map.get("time");
+            step.setTime(Long.toString(time));
+            // Distance
+            Double distance = (Double) json_map.get("distance");
+            step.setDistance(Double.toString(distance));
+            // Interval line
+            List<Integer> interval = (List<Integer>)json_map.get("interval");
+            GeometryFactory geometryFact = new GeometryFactory();
+            List<EdgeStep> edges_list = step.getEdges();
+            Integer first = interval.get(0);
+            Integer last = interval.get(interval.size()-1);
+            Coordinate[] coordinate_list = new Coordinate[last-first+1];
+            int coordinates_index=0;
+            for(int index = first; index<=last; index++){
+            	Double lat = points_route.getLat(index);
+            	Double lon = points_route.getLon(index);
+            	Coordinate c = null;
+            	if(srs.equalsIgnoreCase(this.SRS)){
+                	c = new Coordinate(lon, lat);
+                }else{
+                    c = new Coordinate(lat, lon);
+                }
+            	coordinate_list[coordinates_index] = c;
+            	coordinates_index++;
+            }
+            Coordinate[] last_pos = new Coordinate[2];
+            if(coordinate_list.length <= 1){
+            	last_pos[0] = coordinate_list[0];
+            	last_pos[1] = coordinate_list[0];
+            	coordinate_list = last_pos;
+            }
+            Geometry geom = this.getGeom(coordinate_list, geometryFact, srs);
+            EdgeStep es = new EdgeStep(doc);
+            es.setId(Integer.toString(i) + '0');
+            es.setGeom(geom);
+    		edges_list.add(es);
         	
             // Doc element to return 
         	Element stepElement = doc.createElement("step");
@@ -233,6 +244,25 @@ public class RestRoutingServiceController {
         }
 		
 		return toString(doc);
+	}
+	
+	private Geometry getGeom(Coordinate[] coordinate_list, GeometryFactory geometryFact, String srs){
+		CoordinateSequence seq = new CoordinateArraySequence(coordinate_list);
+        Geometry geometry_proj = new com.vividsolutions.jts.geom.LineString(seq, geometryFact);
+        // Change CRS
+        CoordinateReferenceSystem sourceCRS;
+        CoordinateReferenceSystem targetCRS;
+        MathTransform transform;
+        Geometry geom = null;
+		try {
+			sourceCRS = CRS.decode(this.SRS);
+			targetCRS = CRS.decode(srs);
+			transform = CRS.findMathTransform(sourceCRS, targetCRS);
+			geom = JTS.transform(geometry_proj, transform);
+		} catch (FactoryException | MismatchedDimensionException | TransformException e1) {
+			e1.printStackTrace();
+		}
+		return geom;
 	}
 	
 	private String[] getCoordinates(String tagName, Document document){
@@ -294,27 +324,6 @@ public class RestRoutingServiceController {
 		
 		return point;
 	}
-	
-	private Geometry toLineString(GHPoint p1, GHPoint p2, String srs) throws FactoryException, MismatchedDimensionException, TransformException {
-        Coordinate[] coord = new Coordinate[2];
-        Coordinate c1 = new Coordinate(p1.getLon(), p1.getLat());
-        Coordinate c2 = new Coordinate(p2.getLon(), p2.getLat());
-        coord[0] = c1;
-        coord[1] = c2;
-        CoordinateSequence coorSeq = new CoordinateArraySequence(coord);
-
-        GeometryFactory geometryFact = new GeometryFactory();
-        geometryFact.createLineString(coorSeq);
-
-        Geometry geometry = new com.vividsolutions.jts.geom.LineString(coorSeq, geometryFact);
-
-        CoordinateReferenceSystem sourceCRS = CRS.decode(this.SRS);
-        CoordinateReferenceSystem targetCRS = CRS.decode(srs);
-        MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-        Geometry edge = JTS.transform(geometry, transform);
-
-        return edge;
-    }
 	
 	private class Point {
 		
