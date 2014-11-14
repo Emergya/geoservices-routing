@@ -16,7 +16,6 @@ import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.routing.util.EncodingManager;
-import com.graphhopper.util.shapes.GHPlace;
 import com.graphhopper.util.shapes.GHPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -42,7 +41,9 @@ public class RoutingHandler {
 	@Value("${geoservices.routing.graphhopper.srs}")
 	private String SRS;
 	@Value("${geoservices.routing.graphhopper.locale}")
-	private String LOCALE;
+	private String LOCALE;    
+    @Value("${geoservices.routing.graphhopper.useLonLat}")
+    private boolean USE_LON_LAT = false;
 	
 	private GraphHopper hopper;
 	
@@ -84,7 +85,7 @@ public class RoutingHandler {
 		String coordinate = point[1];
 		String[] pointValue = this.getPoint(coordinate);
 		Coordinate c = null;
-		if(srs.equalsIgnoreCase(this.SRS)){
+		if(srs.equalsIgnoreCase(this.SRS) || USE_LON_LAT){
 			c = new Coordinate(Double.valueOf(pointValue[1]), Double.valueOf(pointValue[0]));
 		}else{
 			c = new Coordinate(Double.valueOf(pointValue[0]), Double.valueOf(pointValue[1]));
