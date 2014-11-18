@@ -15,7 +15,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<geotools.version>2.6.5</geotools.version>
+		<geotools.version>8.0-M4</geotools.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -52,10 +52,19 @@
         </dependency>
         
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-api</artifactId>
-            <version>${geotools.version}</version>
-            <type>jar</type>
-        </dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+			<version>${geotools.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>${geotools.version}</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
+    
+   
+    <name>GeoServices: Routing Engine</name>
 </project>
