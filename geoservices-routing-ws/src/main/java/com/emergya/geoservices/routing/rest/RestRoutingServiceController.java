@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,8 +51,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.io.gml2.GMLWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(value = "/mrk")
@@ -103,7 +103,7 @@ public class RestRoutingServiceController {
             LOG.log(Level.SEVERE, e.getMessage(), e);
             return null;
         }
-
+        
         // Response
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         Document doc = null;
@@ -162,6 +162,8 @@ public class RestRoutingServiceController {
             return null;
         }
         
+        Long accTime = 0L;
+        Double accDistance = 0.0;
         PointList points_route = route.getPoints();
         //Instruction last = null;
         InstructionList inst_list = route.getInstructions();
@@ -176,6 +178,7 @@ public class RestRoutingServiceController {
                 Step step = new Step(doc);
                 // order
                 step.setOrder(Integer.toString(i));
+                
                 // text
                 String text = (String) json_map.get("text");
                 step.setName(text);
@@ -193,10 +196,12 @@ public class RestRoutingServiceController {
                 step.setTargetNode(Integer.toString(i + 1));
                 // Time
                 Long time = (Long) json_map.get("time");
-                step.setTime(Long.toString(time));
+                accTime += time/1000;
+                step.setTime(Long.toString(accTime));
                 // Distance
                 Double distance = (Double) json_map.get("distance");
-                step.setDistance(Double.toString(distance));
+                accDistance += distance;
+                step.setDistance(Double.toString(accDistance));
                 // Interval line
                 List<Integer> interval = (List<Integer>) json_map.get("interval");
                 GeometryFactory geometryFact = new GeometryFactory();
