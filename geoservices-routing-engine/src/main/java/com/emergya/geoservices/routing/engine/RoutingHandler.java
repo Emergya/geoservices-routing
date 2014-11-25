@@ -77,7 +77,8 @@ public class RoutingHandler {
     @PostConstruct
     public void init() {
         hopper = new GraphHopper().forServer();
-        hopper.setEnableTurnRestrictions(true);
+        //hopper.setEnableTurnRestrictions(true);
+        hopper.disableCHShortcuts();
         hopper.setInMemory(true);
         hopper.setOSMFile(this.OSM_FILE_PATH);
         hopper.setGraphHopperLocation(this.GRAPH_PATH);
